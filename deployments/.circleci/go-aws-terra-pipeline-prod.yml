@@ -1,0 +1,51 @@
+version: 2.1
+orbs:
+  aws-ecr: circleci/aws-ecr@9.1.0
+
+parameters:
+  run-authors-ms-workflow:
+    type: boolean
+    default: true
+  run-send-telegram-message-workflow:
+    type: boolean
+    default: false
+
+workflows:
+  go-aws-terra-workflows:
+    when:
+      or:
+        - << pipeline.parameters.run-authors-ms-workflow >>
+    jobs:
+      - go-aws-terra-image-build-push:
+          filters:
+            branches:
+              only: master
+jobs:
+  go-aws-terra-image-build-push:
+    steps:
+        - run:
+            command: |
+              echo $REPO_POLICY_JSON > repoPolicy.json
+        - aws-ecr/build_and_push_image:
+            account_id: ${AWS_ACCOUNT_ID}
+            auth:
+              - aws-cli/setup:
+                  profile: OIDC-USER
+                  role_arn: ${ROLE_ARN}
+            context: CircleCI_OIDC_Token
+            create_repo: true
+            dockerfile: Dockerfile
+            executors: base
+            extra_build_args: '--compress'
+            no_output_timeout: 20m
+            path: ./deployments/docker/authors/Dockerfile
+            platform: linux/amd64
+            profile_name: ${PROFILE_NAME}
+            public_registry: false
+            push_image: true
+            region: us-east-1
+            repo: go-aws-terra-image-repo
+            repo_policy_path: ./repoPolicy.json
+            repo_scan_on_push: true
+            set_repo_policy: true
+            skip_when_tags_exist: false

@@ -1,0 +1,27 @@
+version: 2.1
+setup: true
+orbs:
+  path-filtering: circleci/path-filtering@0.0.2
+workflows:
+  go-aws-terra-dev-setup:
+    jobs:
+      - path-filtering/filter:
+          filters:
+            branches:
+              only: development
+          base-revision: development
+          mapping: |
+            cmd/authors-ms/.* run-authors-ms-workflow true
+            cmd/send-telegram-message/.* run-send-telegram-message-workflow true
+          config-path: deployments/.circleci/go-aws-terra-pipeline-dev.yml
+  go-aws-terra-prod-setup:
+    jobs:
+      - path-filtering/filter:
+          filters:
+            branches:
+              only: master
+          base-revision: master
+          mapping: |
+            cmd/authors-ms/.* run-authors-ms-workflow true
+            cmd/send-telegram-message/.* run-send-telegram-message-workflow true
+          config-path: deployments/.circleci/go-aws-terra-pipeline-prod.yml
