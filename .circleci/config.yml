@@ -13,7 +13,7 @@ workflows:
           mapping: |
             cmd/authors-ms/.* run-authors-ms-workflow true
             cmd/send-telegram-message/.* run-send-telegram-message-workflow true
-          config-path: deployments/.circleci/go-aws-terra-pipeline-dev.yml
+          config-path: .circleci/go-aws-terra-pipeline-dev.yml
   go-aws-terra-prod-setup:
     jobs:
       - path-filtering/filter:
@@ -24,4 +24,4 @@ workflows:
           mapping: |
             cmd/authors-ms/.* run-authors-ms-workflow true
             cmd/send-telegram-message/.* run-send-telegram-message-workflow true
-          config-path: deployments/.circleci/go-aws-terra-pipeline-prod.yml
+          config-path: .circleci/go-aws-terra-pipeline-prod.yml
