@@ -30,7 +30,7 @@ jobs:
             
             docker build -f ./deployments/docker/authors/Dockerfile -t go-aws-terra-authors-image-repo .
             docker tag go-aws-terra-authors-image-repo:latest $ECR_AUTHORS_REPO_URL:latest
-            docker push $ECR_REPO_URL:latest
+            docker push $ECR_AUTHORS_REPO_URL:latest
   go-aws-terra-send-telegram-message-image-build-push:
     docker:
       - image: cimg/aws:2024.03
