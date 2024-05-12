@@ -17,30 +17,22 @@ jobs:
       - image: cimg/aws:2024.03
     steps:
       - checkout
-      - aws-ecr/build_and_push_image:
-          account_id: ${AWS_ACCOUNT_ID}
-          auth:
-            - aws-cli/setup:
-                profile: OIDC-USER
-                role_arn: ${ROLE_ARN}
-          context: CircleCI_OIDC_Token
-          create_repo: true
-          dockerfile: Dockerfile
-          executors: base
-          extra_build_args: '--compress'
-          no_output_timeout: 20m
-          path: ./deployments/docker/authors/Dockerfile
-          platform: linux/amd64
-          profile_name: ${PROFILE_NAME}
-          public_registry: false
-          push_image: true
-          region: us-east-1
-          repo: go-aws-terra-image-repo
-          repo_policy_path: ./repoPolicy.json
-          repo_scan_on_push: true
-          set_repo_policy: true
-          skip_when_tags_exist: false
+      - run:
+          name: Author Microservice Image Build And Push
+          command: |
+            export IMAGE_NAME=$ECR_REPO_URL/go-aws-terra-image-repo/author-ms:$CIRCLE_SHA1
 
+            aws configure set default.region us-east-1
+            aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
+            aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
+
+            aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin $ECR_REPO_URL
+
+            docker images
+
+            docker build -t $IMAGE_NAME .
+
+            docker push $IMAGE_NAME
   go-aws-terra-send-telegram-message-image-build-push:
     docker:
       - image: cimg/aws:2024.03
