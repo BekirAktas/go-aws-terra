@@ -1,5 +1,6 @@
 version: 2.1
 orbs:
+  aws-cli: circleci/aws-cli@4.0
   aws-ecr: circleci/aws-ecr@9.1.0
 
 parameters:
