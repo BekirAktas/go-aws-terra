@@ -17,6 +17,8 @@ jobs:
       - image: cimg/aws:2024.03
     steps:
       - checkout
+      - setup_remote_docker:
+          docker_layer_caching: true
       - run:
           name: Author Microservice Image Build And Push
           command: |
@@ -38,6 +40,8 @@ jobs:
       - image: cimg/aws:2024.03
     steps:
       - checkout
+      - setup_remote_docker:
+          docker_layer_caching: true
       - run:
           name: Send Telegram Message Microservice Image Build And Push
           command: |
