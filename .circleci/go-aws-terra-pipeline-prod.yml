@@ -22,17 +22,15 @@ jobs:
       - run:
           name: Author Microservice Image Build And Push
           command: |
-            export IMAGE_NAME=$ECR_REPO_URL/go-aws-terra-image-repo/author-ms:$CIRCLE_SHA1
-
             aws configure set default.region us-east-1
             aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
             aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
 
-            aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin $ECR_REPO_URL
-
-            docker build -f ./deployments/docker/authors/Dockerfile -t $IMAGE_NAME .
-
-            docker push $IMAGE_NAME
+            aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin $ECR_BASE_URL
+            
+            docker build -f ./deployments/docker/authors/Dockerfile -t go-aws-terra-authors-image-repo .
+            docker tag go-aws-terra-authors-image-repo:latest $ECR_AUTHORS_REPO_URL:latest
+            docker push $ECR_REPO_URL:latest
   go-aws-terra-send-telegram-message-image-build-push:
     docker:
       - image: cimg/aws:2024.03
@@ -43,17 +41,15 @@ jobs:
       - run:
           name: Send Telegram Message Microservice Image Build And Push
           command: |
-            export IMAGE_NAME=$ECR_REPO_URL/go-aws-terra-image-repo/send-telegram-message:$CIRCLE_SHA1
-
             aws configure set default.region us-east-1
             aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
             aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
 
-            aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin $ECR_REPO_URL
+            aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin $ECR_BASE_URL
 
-            docker build -f ./deployments/docker/telegram/Dockerfile -t $IMAGE_NAME .
-
-            docker push $IMAGE_NAME
+            docker build -f ./deployments/docker/telegram/Dockerfile -t go-aws-terra-telegram-image-repo .
+            docker tag go-aws-terra-telegram-image-repo:latest $ECR_TELEGRAM_REPO_URL:latest
+            docker push $ECR_TELEGRAM_REPO_URL:latest
 
 workflows:
   go-aws-terra-author-ms-workflows:
