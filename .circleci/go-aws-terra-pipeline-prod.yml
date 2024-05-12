@@ -30,9 +30,7 @@ jobs:
 
             aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin $ECR_REPO_URL
 
-            docker images
-
-            docker build -t $IMAGE_NAME .
+            docker build -f ./deployments/docker/authors/Dockerfile -t $IMAGE_NAME .
 
             docker push $IMAGE_NAME
   go-aws-terra-send-telegram-message-image-build-push:
@@ -53,9 +51,7 @@ jobs:
 
             aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin $ECR_REPO_URL
 
-            docker images
-
-            docker build -t $IMAGE_NAME .
+            docker build -f ./deployments/docker/telegram/Dockerfile -t $IMAGE_NAME .
 
             docker push $IMAGE_NAME
 
