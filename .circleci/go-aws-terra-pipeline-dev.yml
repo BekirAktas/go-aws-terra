@@ -16,12 +16,12 @@ workflows:
       or:
         - << pipeline.parameters.run-authors-ms-workflow >>
     jobs:
-      - go-aws-terra-image-build-push:
+      - go-aws-terra-author-ms-image-build-push:
           filters:
             branches:
               only: development
 jobs:
-  go-aws-terra-image-build-push:
+  go-aws-terra-author-ms-image-build-push:
     steps:
         - run:
             command: |
