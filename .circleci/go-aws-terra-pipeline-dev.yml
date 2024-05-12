@@ -1,17 +1,58 @@
 version: 2.1
 orbs:
+  aws-cli: circleci/aws-cli@4.0
   aws-ecr: circleci/aws-ecr@9.1.0
 
 parameters:
   run-authors-ms-workflow:
     type: boolean
-    default: false
+    default: true
   run-send-telegram-message-workflow:
     type: boolean
     default: false
 
+jobs:
+  go-aws-terra-author-ms-image-build-push:
+    docker:
+      - image: cimg/aws:2024.03
+    steps:
+      - checkout
+      - setup_remote_docker:
+          docker_layer_caching: true
+      - run:
+          name: Author Microservice Image Build And Push
+          command: |
+            aws configure set default.region us-east-1
+            aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
+            aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
+
+            aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin $ECR_BASE_URL
+            
+            docker build -f ./deployments/docker/authors/Dockerfile -t go-aws-terra-authors-image-repo .
+            docker tag go-aws-terra-authors-image-repo:latest $ECR_AUTHORS_REPO_URL:latest
+            docker push $ECR_AUTHORS_REPO_URL:latest
+  go-aws-terra-send-telegram-message-image-build-push:
+    docker:
+      - image: cimg/aws:2024.03
+    steps:
+      - checkout
+      - setup_remote_docker:
+          docker_layer_caching: true
+      - run:
+          name: Send Telegram Message Microservice Image Build And Push
+          command: |
+            aws configure set default.region us-east-1
+            aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
+            aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
+
+            aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin $ECR_BASE_URL
+
+            docker build -f ./deployments/docker/telegram/Dockerfile -t go-aws-terra-telegram-image-repo .
+            docker tag go-aws-terra-telegram-image-repo:latest $ECR_TELEGRAM_REPO_URL:latest
+            docker push $ECR_TELEGRAM_REPO_URL:latest
+
 workflows:
-  go-aws-terra-workflows:
+  go-aws-terra-author-ms-workflows:
     when:
       or:
         - << pipeline.parameters.run-authors-ms-workflow >>
@@ -20,32 +61,12 @@ workflows:
           filters:
             branches:
               only: development
-jobs:
-  go-aws-terra-author-ms-image-build-push:
-    steps:
-        - run:
-            command: |
-              echo $REPO_POLICY_JSON > repoPolicy.json
-        - aws-ecr/build_and_push_image:
-            account_id: ${AWS_ACCOUNT_ID}
-            auth:
-              - aws-cli/setup:
-                  profile: OIDC-USER
-                  role_arn: ${ROLE_ARN}
-            context: CircleCI_OIDC_Token
-            create_repo: true
-            dockerfile: Dockerfile
-            executors: base
-            extra_build_args: '--compress'
-            no_output_timeout: 20m
-            path: ./deployments/docker/authors/Dockerfile
-            platform: linux/amd64
-            profile_name: ${PROFILE_NAME}
-            public_registry: false
-            push_image: true
-            region: us-east-1
-            repo: go-aws-terra-image-repo
-            repo_policy_path: ./repoPolicy.json
-            repo_scan_on_push: true
-            set_repo_policy: true
-            skip_when_tags_exist: false
+  go-aws-terra-send-telegram-message-workflows:
+    when:
+      or:
+        - << pipeline.parameters.run-send-telegram-message-workflow >>
+    jobs:
+      - go-aws-terra-send-telegram-message-image-build-push:
+          filters:
+            branches:
+              only: development

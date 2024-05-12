@@ -6,7 +6,7 @@ orbs:
 parameters:
   run-authors-ms-workflow:
     type: boolean
-    default: true
+    default: false
   run-send-telegram-message-workflow:
     type: boolean
     default: false
