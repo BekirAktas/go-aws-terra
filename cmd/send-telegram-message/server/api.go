@@ -32,7 +32,6 @@ func (s *APIServer) Run() {
   fmt.Println(http.ListenAndServe(s.listenAddr, router))
 }
 
-
 func (s *APIServer) handleSendMessage(w http.ResponseWriter, r *http.Request) {
   var requestBody struct {
     Message string `json:"message"`
