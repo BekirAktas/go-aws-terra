@@ -4,17 +4,28 @@ import (
     "gorm.io/driver/postgres"
     "gorm.io/gorm"
     "log"
+    "github.com/joho/godotenv"
+    "os"
+    "fmt"
 )
 
 func ConnectToDatabase() *gorm.DB  {
-    dsn := "host=postgres user=postgres password=postgres dbname=go-aws-terra port=5432 sslmode=disable TimeZone=UTC"
+  godotenv.Load(".env")
 
-    db, err := gorm.Open(postgres.Open(dsn))
+  host := os.Getenv("host")
+  user := os.Getenv("user")
+  password := os.Getenv("password")
+  db_name := os.Getenv("db_name")
 
-    if err != nil {
-        log.Fatal("Failed to connect to database:", err)
-    }
+  dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=5432 sslmode=disable TimeZone=UTC", host, user, password, db_name)
 
-    return db
+
+  db, err := gorm.Open(postgres.Open(dsn))
+
+  if err != nil {
+    log.Fatal("Failed to connect to database:", err)
+  }
+
+  return db
 }
 
