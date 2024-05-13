@@ -179,7 +179,7 @@ Subnets are divisions within the VPC that allow you to segment resources. There 
 
 Route tables define how network traffic is routed within the VPC. In this VPC, there are two route tables:
 
-- **Public Route Table (ID: rtb-05419e9b1ac940b86)**:
+- **Public Route Table ()**:
   - Associated with the Public Subnets.
   - Routes traffic destined for the internet to the Internet Gateway (IGW).
 
