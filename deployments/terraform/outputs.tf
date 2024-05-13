@@ -5,7 +5,7 @@ output "go_aws_terra_vpc_id" {
 #output "go_aws_terra_cluster_name" {
 #  value = module.eks.cluster_name
 #}
-
+#
 #output "go_aws_terra_rds_endpoint" {
 #  value = aws_db_instance.go_aws_terra_main_db_instance.endpoint
 #}

@@ -96,3 +96,12 @@ resource "aws_security_group" "database-security-group" {
     Name = "Database Security Group"
   }
 }
+
+resource "aws_db_subnet_group" "go-aws-terra-db-subnet-groups" {
+  name       = "main"
+  subnet_ids = [aws_subnet.go_aws_terra_private_subnet.id, aws_subnet.go_aws_terra_private_subnet_b.id]
+
+  tags = {
+    Name = "DB subnet groups"
+  }
+}

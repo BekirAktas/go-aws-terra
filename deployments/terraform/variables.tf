@@ -37,3 +37,14 @@ variable "go_aws_terra_profile_name" {
   type        = string
   default     = "terraform-user" 
 }
+
+variable "db_username_1" {
+  description = "database user name"
+  type = string
+}
+
+variable "db_password_1" {
+  description = "database password"
+  type = string
+  sensitive = true
+}
